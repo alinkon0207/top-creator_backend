@@ -35,73 +35,86 @@ const schema = makeExecutableSchema({
     },
 });
 
-const wsClient = new WebSocket('wss://ws2.onlyfans.com/ws2/');
-// const wsClient = new WebSocket('wss://streamer.cryptocompare.com/v2');
+// const wsClient = new WebSocket('wss://ws2.onlyfans.com/ws2/');
 
-wsClient.on('open', () => {
-    console.log('Connected to ws2.onlyfans.com');
-});
+// wsClient.on('open', () => {
+//     console.log('Connected to ws2.onlyfans.com');
+//     wsClient.send("{\"act\": \"connect\", \"token\": \"\"}");
+// });
 
-wsClient.on('close', () => {
-    console.log('Disconnected from ws2.onlyfans.com');
-});
-// send to websocket (create new on send or use "open")
-wsClient.on('message', function incoming(data) {
-    console.log('message:', data);
-});
+// wsClient.on('close', () => {
+//     console.log('Disconnected from ws2.onlyfans.com');
+// });
+// // send to websocket (create new on send or use "open")
+// wsClient.on('message', function incoming(data) {
+//     console.log('message:', data.toString());
+// });
 
-wsClient.on('error', (error) => {
-    console.error('WebSocket error:', error);
-});
+// wsClient.on('error', (error) => {
+//     console.error('WebSocket error:', error);
+// });
 
+let curSocket: any;
 
-// async function connectToWebSocket(url: any, token: any, client: any) {
-//     return new Promise((resolve, reject) => {
-//         const socket = new WebSocket(url);
+async function sendHeartbeat() {
+    console.log("Sending Heartbeat...");
+    curSocket.send(JSON.stringify({act: "get_onlines", ids: []}));
 
-//         socket.on('open', async () => {
-//             console.log("WebSocket connection established");
+    setTimeout(sendHeartbeat, 20000);   // for every 20s
+}
 
-//             try {
-//                 console.log("Sending connect message");
-//                 socket.send(JSON.stringify({ act: "connect", token }));
+async function connectToWebSocket(url: any, token: any, client: any) {
+    return new Promise((resolve, reject) => {
+        const socket = new WebSocket(url);
 
-//                 socket.on('message', function incoming(data: any) {
-//                     const msg = JSON.parse(data);
-//                     // Обработка полученного сообщения
-//                     if (msg.type === 'Connected') {
-//                         // Логика обработки подключенного сообщения
-//                         resolve(socket);
-//                     }
-//                 });
+        socket.on('open', async () => {
+            console.log("WebSocket connection established");
 
-//                 // Дополнительная обработка ошибок и закрытия соединения
-//                 socket.on('error', (error) => {
-//                     reject(error);
-//                 });
+            try {
+                console.log("Sending connect message");
+                socket.send(JSON.stringify({ act: "connect", token }));
 
-//                 socket.on('close', () => {
-//                     console.log("WebSocket connection closed");
-//                 });
+                socket.on('message', function incoming(data: any) {
+                    const msg = JSON.parse(data);
+                    console.log('msg:', data.toString());
+                    // console.log('msg.connected:', msg.connected);
+                    
+                    // Processing a received message
+                    if (msg.connected === true) {
+                        // Logic for processing a connected message
+                        console.log("Connected!");
+                        curSocket = socket;
+                        setTimeout(sendHeartbeat, 20000);
+                        resolve(socket);
+                    }
+                });
 
-//             } catch (error) {
-//                 reject(error);
-//             }
-//         });
-//     });
-// }
+                // Additional error handling and connection closures
+                socket.on('error', (error) => {
+                    reject(error);
+                });
 
-// // Использование функции
-// const url = 'wss://ws2.onlyfans.com/ws2/';
-// const token = 'your_token_here';  // Replace with your token
-// const client = {};  // Замените на ваш клиентский объект
-// connectToWebSocket(url, token, client)
-//     .then(socket => {
-//         // Логика после успешного подключения
-//     })
-//     .catch(error => {
-//         console.error("Error in WebSocket connection:", error);
-//     });
+                socket.on('close', () => {
+                    console.log("WebSocket connection closed");
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    });
+}
+
+// Using the function
+const url = 'wss://ws2.onlyfans.com/ws2/';
+const token = '';  // Replace with your token
+const client = {};  // Replace with your client object
+connectToWebSocket(url, token, client)
+    .then(socket => {
+        // Logic after successful connection
+    })
+    .catch(error => {
+        console.error("Error in WebSocket connection:", error);
+    });
 
 const server = new ApolloServer({
     schema,
