@@ -1,0 +1,58 @@
+type LoginExtensionResponse {
+    token: String
+    visibilitySettings: Visibility
+}
+
+type CreatorWithoutPreferences {
+    id: ID!
+    link: String!
+    userId: ID!
+    license: License
+    userName: String
+    avatarURL: String
+    joinDate: Date
+    creatorAuth: CreatorAuth
+}
+
+type GetPreferencesByChatterIdExtensionResponse {
+    preferences: [Preferences]
+    chatter: CreatorWithoutPreferences
+}
+
+type PreferencesForChatterId {
+    message: String
+    preferences: [Preferences]
+}
+
+type VisibilitySettingByExtension {
+    user_id: String
+    visibilitySetting: Visibility
+}
+
+input LoginExtensionInput {
+    email: String!
+    password: String!
+    user_id: String!
+}
+
+input GetPreferencesByChatterIdExtensionInput {
+    chatterId: String!
+    user_id: String!
+}
+
+input AddPreferencesInput {
+    user_id: String!
+    chatterId: String!
+    preferencesText: [String!]!
+}
+
+type Mutation {
+    loginExtension(input: LoginExtensionInput!): LoginExtensionResponse
+    changeCreatorAuthByExtension(input: ChangeCreatorAuthInput): String
+    addPreferences(input: AddPreferencesInput): PreferencesForChatterId
+}
+
+type Query {
+    getPreferencesByChatterIdExtension(input: GetPreferencesByChatterIdExtensionInput): GetPreferencesByChatterIdExtensionResponse
+    getVisibilitySettingByTokenExtension(user_id: String): VisibilitySettingByExtension
+}

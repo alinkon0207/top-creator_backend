@@ -1,0 +1,59 @@
+type ResponseAvatarAndName {
+     photoUrl: String,
+     name: String
+}
+
+type AmountStats {
+    date: Date
+    amount: Float
+}
+
+type Composition{
+    type: String
+    amountStats: [AmountStats]
+}
+
+type Chart{
+    count: Float
+    date: Date
+}
+
+type StatisticSection{
+    chart: [Chart]
+    total: Float
+}
+
+type TopFan{
+    name: String
+    userName: String
+    avatarUrl: String
+    total: Float
+}
+
+type Best{
+    name: String
+    average: Float
+}
+
+type Statistic{
+    turnover: StatisticSection
+    subscription: StatisticSection
+    composition: [Composition]
+    topFans: [TopFan]
+    bestDay: [Best]
+    bestHour: [Best]
+}
+
+input GetCreatorStatisticInput {
+    startDate: Date
+    endDate: Date
+    creatorId: ID!
+}
+
+type Query {
+    scrapePublicOnlyFansPhoto(url: String!): String
+    scrapeAvatarAndNameForCreator(url: String!): ResponseAvatarAndName
+    scraperAPIAvatarAndNameForCreator(id: String!): ResponseAvatarAndName
+    getCreatorStatistic(input: GetCreatorStatisticInput): Statistic
+}
+

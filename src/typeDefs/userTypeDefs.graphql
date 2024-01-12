@@ -1,0 +1,80 @@
+type User {
+    id: ID!
+    fullName: String!
+    email: String!
+    passwordHash: String!
+    resetPassword: ResetPassword
+    role: UserRole
+}
+
+type UserDTO {
+    id: ID!
+    fullName: String
+    email: String!
+    role: UserRole
+}
+
+enum UserRole {
+    ADMIN
+    USER
+}
+
+type ResetPassword {
+    resetCode: Int
+    expire: String
+}
+
+input RegisterUserInput {
+    email: String!
+    password: String!
+    fullName: String!
+}
+
+input LoginInput {
+    login: String!
+    password: String!
+}
+
+type RegisterOrLoginResponse {
+    message: String!
+    user: UserDTO
+    token: String!
+    creators: [CreatorForUser]
+}
+
+input changePasswordInput {
+    login: String!
+    resetCode: Int!
+    newPassword: String!
+}
+
+type CreatorForUser {
+    id: ID!
+    link: String!
+    license: License
+    userName: String
+    avatarURL: String
+    creatorAuth: CreatorAuth
+    createdAt: String!
+    updatedAt: String!
+    proxy: Proxy
+}
+
+type GetUserByTokenResponse {
+    user: UserDTO
+    creators: [CreatorForUser]
+    token: String
+}
+
+type Mutation {
+    register(input: RegisterUserInput): RegisterOrLoginResponse!
+    login(input: LoginInput): RegisterOrLoginResponse!
+    forgotPassword(login: String!): String!
+    changePassword(input: changePasswordInput!): String!
+}
+
+type Query {
+    getUserByToken: GetUserByTokenResponse
+}
+
+

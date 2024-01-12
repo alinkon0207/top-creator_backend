@@ -1,0 +1,19 @@
+type AutoFollow {
+    id: ID!
+    creatorId: ID!
+    createdBy: ID!
+    active: Boolean!
+}
+
+input ChangeAutoFollowInput {
+    id: ID!
+    active: Boolean
+}
+
+type Mutation {
+    changeAutoFollow(input: ChangeAutoFollowInput): AutoFollow  
+}
+
+type Query {
+    getAutoFollow(creatorId: String): AutoFollow
+}
