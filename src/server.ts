@@ -35,23 +35,24 @@ const schema = makeExecutableSchema({
     },
 });
 
-// const wsClient = new WebSocket('wss://ws2.onlyfans.com/ws2');
+const wsClient = new WebSocket('wss://ws2.onlyfans.com/ws2/');
+// const wsClient = new WebSocket('wss://streamer.cryptocompare.com/v2');
 
-// wsClient.on('open', () => {
-//     console.log('Connected to ws2.onlyfans.com');
-// });
+wsClient.on('open', () => {
+    console.log('Connected to ws2.onlyfans.com');
+});
 
-// wsClient.on('close', () => {
-//     console.log('Disconnected from ws2.onlyfans.com');
-// });
-// // send to websocket (create new on send or use "open")
-// wsClient.on('message', function incoming(data) {
-//     console.log('message:', data);
-// });
+wsClient.on('close', () => {
+    console.log('Disconnected from ws2.onlyfans.com');
+});
+// send to websocket (create new on send or use "open")
+wsClient.on('message', function incoming(data) {
+    console.log('message:', data);
+});
 
-// wsClient.on('error', (error) => {
-//     console.error('WebSocket error:', error);
-// });
+wsClient.on('error', (error) => {
+    console.error('WebSocket error:', error);
+});
 
 
 // async function connectToWebSocket(url: any, token: any, client: any) {
@@ -91,7 +92,7 @@ const schema = makeExecutableSchema({
 // }
 
 // // Использование функции
-// const url = 'wss://ws2.onlyfans.com/ws2';
+// const url = 'wss://ws2.onlyfans.com/ws2/';
 // const token = 'your_token_here';  // Replace with your token
 // const client = {};  // Замените на ваш клиентский объект
 // connectToWebSocket(url, token, client)
